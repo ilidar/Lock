@@ -11,6 +11,7 @@
 static const CGFloat sDotRadius = 8.0f;
 static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
+static const CGFloat sTouchCircleRadius = 40.0f;
 
 static inline CGFloat sGetSurfaceRadiusChange()
 {
@@ -77,7 +78,7 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
 - (void)drawRect:(CGRect)rect {
   CGFloat surfaceRadiusChange = sGetSurfaceRadiusChange();
   
-  for (CGFloat r = 0.0f; r <= sSurfaceRadius; r += surfaceRadiusChange) {
+  for (CGFloat r = 2.0f * surfaceRadiusChange; r <= sSurfaceRadius; r += surfaceRadiusChange) {
     CGPoint beginPoint = CGPointMake(r, 0.0f);
     
     CGFloat angleChange = sGetArcChange(r);
@@ -90,12 +91,12 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
 
 #pragma mark - Private Methods
 
-- (void)pm_drawCircleAtPoint:(CGPoint)point {
+- (void)pm_drawCircleAtPoint:(CGPoint)point color:(UIColor *)color {
   CGContextRef context = UIGraphicsGetCurrentContext();
   
   CGContextSetLineWidth(context, 2.0);
   
-  CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
+  CGContextSetFillColorWithColor(context, color.CGColor);
   
   CGRect rectangle = CGRectMake(point.x - sDotRadius / 2.0f,
                                 point.y - sDotRadius / 2.0f,
@@ -105,6 +106,10 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
   CGContextAddEllipseInRect(context, rectangle);
   
   CGContextFillPath(context);
+}
+
+- (void)pm_drawCircleAtPoint:(CGPoint)point {
+  [self pm_drawCircleAtPoint:point color:[UIColor blueColor]];
 }
 
 @end
