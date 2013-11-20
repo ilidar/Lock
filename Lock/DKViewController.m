@@ -13,6 +13,30 @@ static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
 static const CGFloat sTouchCircleRadius = 40.0f;
 
+typedef struct {
+  CGFloat radius;
+  CGPoint center;
+} Circle;
+
+static Circle sCircleZero;
+
+static inline Circle sCircleMake(CGPoint center, CGFloat radius)
+{
+  Circle circle;
+  circle.radius = radius;
+  circle.center = center;
+  return circle;
+}
+
+static inline BOOL sCircleIntersectsCircle(Circle first, Circle second)
+{
+  CGFloat dx = second.center.x - first.center.x;
+  CGFloat dy = second.center.y - first.center.y;
+  CGFloat dist = sqrt(dx * dx + dy * dy);
+  
+  return dist <= first.radius + second.radius;
+}
+
 static inline CGFloat sGetSurfaceRadiusChange()
 {
   return sDotMargin + sDotRadius;
@@ -47,7 +71,7 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
 
 @interface LockView : UIView
 
-@property (nonatomic, assign) CGPoint currentPosition;
+@property (nonatomic, assign) Circle touchCircle;
 
 @end
 
@@ -56,19 +80,23 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
 #pragma mark - Touch Methods
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-  self.currentPosition = [[touches anyObject] locationInView:self];
+  CGPoint point = [[touches anyObject] locationInView:self];
+  
+  self.touchCircle = sCircleMake(point, sTouchCircleRadius);
   
   [self setNeedsDisplay];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-  self.currentPosition = [[touches anyObject] locationInView:self];
+  CGPoint point = [[touches anyObject] locationInView:self];
+  
+  self.touchCircle = sCircleMake(point, sTouchCircleRadius);
   
   [self setNeedsDisplay];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-  self.currentPosition = CGPointZero;
+  self.touchCircle = sCircleZero;
   
   [self setNeedsDisplay];
 }
@@ -84,32 +112,34 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
     CGFloat angleChange = sGetArcChange(r);
     
     for (CGFloat alpha = 0.0f; alpha <= 360.0f; alpha += angleChange) {
-      [self pm_drawCircleAtPoint:sGetDotCenter(alpha, beginPoint, self.center)];
+      Circle circle = sCircleMake(sGetDotCenter(alpha, beginPoint, self.center), sDotRadius);
+      
+      if (sCircleIntersectsCircle(self.touchCircle, circle)) {
+        [self pm_drawCircle:circle color:[UIColor redColor]];
+      } else {
+        [self pm_drawCircle:circle color:[UIColor blueColor]];
+      }
     }
   }
 }
 
 #pragma mark - Private Methods
 
-- (void)pm_drawCircleAtPoint:(CGPoint)point color:(UIColor *)color {
+- (void)pm_drawCircle:(Circle)circle color:(UIColor *)color {
   CGContextRef context = UIGraphicsGetCurrentContext();
   
   CGContextSetLineWidth(context, 2.0);
   
   CGContextSetFillColorWithColor(context, color.CGColor);
   
-  CGRect rectangle = CGRectMake(point.x - sDotRadius / 2.0f,
-                                point.y - sDotRadius / 2.0f,
+  CGRect rectangle = CGRectMake(circle.center.x - sDotRadius / 2.0f,
+                                circle.center.y - sDotRadius / 2.0f,
                                 sDotRadius,
                                 sDotRadius);
   
   CGContextAddEllipseInRect(context, rectangle);
   
   CGContextFillPath(context);
-}
-
-- (void)pm_drawCircleAtPoint:(CGPoint)point {
-  [self pm_drawCircleAtPoint:point color:[UIColor blueColor]];
 }
 
 @end
