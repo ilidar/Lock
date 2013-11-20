@@ -8,7 +8,7 @@
 
 #import "DKViewController.h"
 
-static const CGFloat sDotRadius = 8.0f;
+static const CGFloat sDotRadius = 3.0f;
 static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
 static const CGFloat sTouchCircleRadius = 40.0f;
