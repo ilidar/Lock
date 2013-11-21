@@ -10,7 +10,6 @@
 
 static const CGFloat sDotRadius = 5.0f;
 static const CGFloat sDotMargin = 7.5f;
-static const CGFloat sSurfaceRadius = 150.0f;
 static const CGFloat sTouchCircleRadius = 70.0f;
 
 typedef struct {
@@ -49,7 +48,7 @@ static inline CGFloat sGetSurfaceRadiusChangeBegin()
 
 static inline CGFloat sGetSurfaceRadius()
 {
-  return sSurfaceRadius;
+  return MIN([[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height) / 2.0f;
 }
 
 static inline CGFloat sGetArcChangeCoef(CGFloat radius)
