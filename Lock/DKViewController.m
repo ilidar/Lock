@@ -51,6 +51,11 @@ static inline CGFloat sGetSurfaceRadius()
   return MIN([[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height) / 2.0f;
 }
 
+static inline CGFloat sGetSurfaceNormalizedRadius()
+{
+  return (int)(sGetSurfaceRadius() / sGetSurfaceRadiusChange()) * sGetSurfaceRadiusChange();
+}
+
 static inline CGFloat sGetArcChangeCoef(CGFloat radius)
 {
   CGFloat da = asin((sDotRadius + sDotMargin) / radius) * 180.0f / M_PI;
@@ -66,7 +71,7 @@ static inline CGFloat sGetArcChangeCoef(CGFloat radius)
   return da;
 }
 
-static inline CGFloat sGetDotRadiusChangeCoef()
+static inline CGFloat sGetCircleRadiusChangeCoef()
 {
   return 0.05f;
 }
@@ -119,7 +124,7 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
 #pragma mark - Draw Methods
 
 - (void)drawRect:(CGRect)rect {
-  if (!sCircleIntersectsCircle(self.touchCircle, sCircleMake(self.center, sGetSurfaceRadius()))) {
+  if (!sCircleIntersectsCircle(self.touchCircle, sCircleMake(self.center, sGetSurfaceNormalizedRadius()))) {
     return;
   }
   
@@ -164,7 +169,7 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
       }
     }
     
-    dotRadiusCoef += sGetDotRadiusChangeCoef();
+    dotRadiusCoef += sGetCircleRadiusChangeCoef();
     
     radius += sGetSurfaceRadiusChange();
   }
