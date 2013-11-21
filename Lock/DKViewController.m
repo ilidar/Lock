@@ -11,7 +11,7 @@
 static const CGFloat sDotRadius = 3.0f;
 static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
-static const CGFloat sTouchCircleRadius = 40.0f;
+static const CGFloat sTouchCircleRadius = 50.0f;
 
 typedef struct {
   CGFloat radius;
@@ -40,6 +40,11 @@ static inline BOOL sCircleIntersectsCircle(Circle first, Circle second)
 static inline CGFloat sGetSurfaceRadiusChange()
 {
   return sDotMargin + sDotRadius;
+}
+
+static inline CGFloat sGetSurfaceRadiusChangeBegin()
+{
+  return 2.0f * sGetSurfaceRadiusChange();
 }
 
 static inline CGFloat sGetArcChange(CGFloat radius)
@@ -104,20 +109,16 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
 #pragma mark - Draw Methods
 
 - (void)drawRect:(CGRect)rect {
-  CGFloat surfaceRadiusChange = sGetSurfaceRadiusChange();
-  
-  for (CGFloat r = 2.0f * surfaceRadiusChange; r <= sSurfaceRadius; r += surfaceRadiusChange) {
-    CGPoint beginPoint = CGPointMake(r, 0.0f);
+  for (CGFloat radius = sGetSurfaceRadiusChangeBegin(); radius <= sSurfaceRadius; radius += sGetSurfaceRadiusChange()) {
+    CGPoint beginPoint = CGPointMake(radius, 0.0f);
     
-    CGFloat angleChange = sGetArcChange(r);
+    CGFloat angleChange = sGetArcChange(radius);
     
     for (CGFloat alpha = 0.0f; alpha <= 360.0f; alpha += angleChange) {
       Circle circle = sCircleMake(sGetDotCenter(alpha, beginPoint, self.center), sDotRadius);
       
       if (sCircleIntersectsCircle(self.touchCircle, circle)) {
         [self pm_drawCircle:circle color:[UIColor redColor]];
-      } else {
-        [self pm_drawCircle:circle color:[UIColor blueColor]];
       }
     }
   }
