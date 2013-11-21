@@ -47,7 +47,12 @@ static inline CGFloat sGetSurfaceRadiusChangeBegin()
   return 2.0f * sGetSurfaceRadiusChange();
 }
 
-static inline CGFloat sGetArcChange(CGFloat radius)
+static inline CGFloat sGetSurfaceRadius()
+{
+  return sSurfaceRadius;
+}
+
+static inline CGFloat sGetArcChangeCoef(CGFloat radius)
 {
   CGFloat da = asin((sDotRadius + sDotMargin) / radius) * 180.0f / M_PI;
   
@@ -62,11 +67,16 @@ static inline CGFloat sGetArcChange(CGFloat radius)
   return da;
 }
 
-static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint center)
+static inline CGFloat sGetDotRadiusChangeCoef()
+{
+  return 0.05f;
+}
+
+static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint center)
 {
   CGAffineTransform transform = CGAffineTransformMakeRotation(angle * M_PI / 180.0f);
   
-  CGPoint dotCenter = CGPointApplyAffineTransform(beginPoint, transform);
+  CGPoint dotCenter = CGPointApplyAffineTransform(arcPoint, transform);
   
   dotCenter.x += center.x;
   dotCenter.y += center.y;
@@ -126,13 +136,19 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
   
   CGContextSetLineWidth(context, 2.0);
   
-  for (CGFloat coef = 1.0f, radius = sGetSurfaceRadiusChangeBegin(); radius <= sSurfaceRadius; radius += sGetSurfaceRadiusChange(), coef += 0.05f) {
-    CGPoint beginPoint = CGPointMake(radius, 0.0f);
+  CGFloat radius = sGetSurfaceRadiusChangeBegin();
+  
+  CGFloat dotRadiusCoef = 1.0f;
+  
+  while (radius <= sGetSurfaceRadius()) {
+    CGPoint arcPoint = CGPointMake(radius, 0.0f);
     
-    CGFloat angleChange = sGetArcChange(radius);
+    CGFloat angleChange = sGetArcChangeCoef(radius);
     
     for (CGFloat alpha = 0.0f; alpha <= 360.0f; alpha += angleChange) {
-      Circle circle = sCircleMake(sGetDotCenter(alpha, beginPoint, self.center), sDotRadius / coef);
+      CGPoint circleCenter = sGetCircleCenter(alpha, arcPoint, self.center);
+      
+      Circle circle = sCircleMake(circleCenter, sDotRadius / dotRadiusCoef);
       
       if (sCircleIntersectsCircle(self.touchCircle, circle)) {
         CGRect rectangle = CGRectMake(circle.center.x - circle.radius / 2.0f,
@@ -143,6 +159,10 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
         CGContextAddEllipseInRect(context, rectangle);
       }
     }
+    
+    dotRadiusCoef += sGetDotRadiusChangeCoef();
+    
+    radius += sGetSurfaceRadiusChange();
   }
   
   CGContextClip(context);
