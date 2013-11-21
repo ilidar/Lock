@@ -33,7 +33,7 @@ static inline BOOL sCircleIntersectsCircle(Circle first, Circle second)
   CGFloat dy = second.center.y - first.center.y;
   CGFloat dist = sqrt(dx * dx + dy * dy);
   
-  return dist <= first.radius + second.radius - 4.0f;
+  return dist <= first.radius + second.radius;
 }
 
 static inline CGFloat sGetSurfaceRadiusChange()
@@ -78,6 +78,7 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
   CGPoint dotCenter = CGPointApplyAffineTransform(arcPoint, transform);
   
   dotCenter.x += center.x;
+  
   dotCenter.y += center.y;
   
   return dotCenter;
@@ -118,6 +119,10 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
 #pragma mark - Draw Methods
 
 - (void)drawRect:(CGRect)rect {
+  if (!sCircleIntersectsCircle(self.touchCircle, sCircleMake(self.center, sGetSurfaceRadius()))) {
+    return;
+  }
+  
   CGFloat colors [] = {
     1.0, 1.0, 1.0, 0.3,
     0.0, 0.0, 0.0, 0.7
