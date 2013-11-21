@@ -8,7 +8,7 @@
 
 #import "DKViewController.h"
 
-static const CGFloat sDotRadius = 4.0f;
+static const CGFloat sDotRadius = 2.0f;
 static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
 static const CGFloat sTouchCircleRadius = 50.0f;
@@ -163,7 +163,7 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
   
   CGContextClip(context);
   
-  CGContextDrawRadialGradient(context, gradient, self.center, 0, self.center, self.frame.size.width, kCGGradientDrawsAfterEndLocation);
+  CGContextDrawRadialGradient(context, gradient, circle.center, 0, circle.center, circle.radius, kCGGradientDrawsAfterEndLocation);
   
   CGGradientRelease(gradient), gradient = NULL;
 
