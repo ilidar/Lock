@@ -8,7 +8,7 @@
 
 #import "DKViewController.h"
 
-static const CGFloat sDotRadius = 3.0f;
+static const CGFloat sDotRadius = 4.0f;
 static const CGFloat sDotMargin = 4.0f;
 static const CGFloat sSurfaceRadius = 150.0f;
 static const CGFloat sTouchCircleRadius = 50.0f;
@@ -119,6 +119,8 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
       
       if (sCircleIntersectsCircle(self.touchCircle, circle)) {
         [self pm_drawCircle:circle color:[UIColor redColor]];
+      } else {
+        [self pm_drawCircle:circle color:[UIColor blueColor]];
       }
     }
   }
@@ -133,14 +135,39 @@ static inline CGPoint sGetDotCenter(CGFloat angle, CGPoint beginPoint, CGPoint c
   
   CGContextSetFillColorWithColor(context, color.CGColor);
   
-  CGRect rectangle = CGRectMake(circle.center.x - sDotRadius / 2.0f,
-                                circle.center.y - sDotRadius / 2.0f,
-                                sDotRadius,
-                                sDotRadius);
+  CGRect rectangle = CGRectMake(circle.center.x - circle.radius / 2.0f,
+                                circle.center.y - circle.radius / 2.0f,
+                                circle.radius,
+                                circle.radius);
   
   CGContextAddEllipseInRect(context, rectangle);
   
   CGContextFillPath(context);
+}
+
+- (void)pm_drawGradientCircle:(Circle)circle {
+  CGFloat colors [] = {
+    0.2, 0.2, 0.2, 1.0,
+    0.0, 0.0, 0.0, 1.0
+  };
+  
+  CGColorSpaceRef baseSpace = CGColorSpaceCreateDeviceRGB();
+  
+  CGGradientRef gradient = CGGradientCreateWithColorComponents(baseSpace, colors, NULL, 2);
+  
+  CGColorSpaceRelease(baseSpace), baseSpace = NULL;
+  
+  CGContextRef context = UIGraphicsGetCurrentContext();
+  
+  CGContextSaveGState(context);
+  
+  CGContextClip(context);
+  
+  CGContextDrawRadialGradient(context, gradient, self.center, 0, self.center, self.frame.size.width, kCGGradientDrawsAfterEndLocation);
+  
+  CGGradientRelease(gradient), gradient = NULL;
+
+  CGContextRestoreGState(context);
 }
 
 @end
