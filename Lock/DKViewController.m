@@ -56,7 +56,7 @@ static inline CGFloat sGetArcChangeCoef(CGFloat radius)
 {
   CGFloat da = asin((sDotRadius + sDotMargin) / radius) * 180.0f / M_PI;
   
-  int n = 360.0f / da;
+  NSInteger n = 360.0f / da;
   
   CGFloat ds = 360.0f - ( da * n );
   
