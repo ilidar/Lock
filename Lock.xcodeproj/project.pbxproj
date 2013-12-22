@@ -136,10 +136,10 @@
 		45F3A235186730EC00514BC9 /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				45F3A236186730EC00514BC9 /* Controller */,
-				45F3A239186730EC00514BC9 /* Main */,
 				45F3A23E186730EC00514BC9 /* Model */,
 				45F3A23F186730EC00514BC9 /* View */,
+				45F3A236186730EC00514BC9 /* Controller */,
+				45F3A239186730EC00514BC9 /* Main */,
 			);
 			path = Code;
 			sourceTree = "<group>";
