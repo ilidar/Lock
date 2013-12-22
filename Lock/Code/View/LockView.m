@@ -1,12 +1,12 @@
 //
-//  DKViewController.m
+//  LockView.m
 //  Lock
 //
-//  Created by Denys Kotelovych on 20.11.13.
+//  Created by Denys Kotelovych on 12/22/13.
 //  Copyright (c) 2013 D.K. All rights reserved.
 //
 
-#import "DKViewController.h"
+#import "LockView.h"
 
 static const CGFloat sDotRadius = 5.0f;
 static const CGFloat sDotMargin = 7.5f;
@@ -89,7 +89,7 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
   return dotCenter;
 }
 
-@interface LockView : UIView
+@interface LockView ()
 
 @property (nonatomic, assign) Circle touchCircle;
 
@@ -187,16 +187,6 @@ static inline CGPoint sGetCircleCenter(CGFloat angle, CGPoint arcPoint, CGPoint 
   CGGradientRelease(gradient);
   
   CGContextRestoreGState(context);
-}
-
-@end
-
-@implementation DKViewController
-
-- (void)loadView
-{
-  self.view = [[LockView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-  self.view.backgroundColor = [UIColor blackColor];
 }
 
 @end

@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "DKAppDelegate.h"
+#import "LockAppDelegate.h"
 
 int main(int argc, char * argv[])
 {
   @autoreleasepool {
-      return UIApplicationMain(argc, argv, nil, NSStringFromClass([DKAppDelegate class]));
+      return UIApplicationMain(argc, argv, nil, NSStringFromClass([LockAppDelegate class]));
   }
 }
